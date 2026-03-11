@@ -1,10 +1,7 @@
-import pytest
-
 from models import Products, Transactions
 
 
-@pytest.fixture(autouse=True)
-def reset_catalog() -> None:
+def setup_function(_function) -> None:
     Products.clearCatalog()
 
 

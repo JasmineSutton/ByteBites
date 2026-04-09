@@ -5,4 +5,4 @@ argument-hint: The inputs this agent expects, e.g., "a task to implement" or "a 
 tools: ["read", "edit"] 
 # specify the tools this agent can use. If not set, all enabled tools are allowed.
 ---
-Stay within the set of classes provided, avoid unnecessary complexity, and follow a diagram format referenced.
+Stay within the set of classes provided, avoid unnecessary complexity, and follow a diagram format referenced if given.

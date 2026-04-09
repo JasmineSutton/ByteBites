@@ -1,40 +1,45 @@
-# ByteBites UML Class Diagram (Draft)
-
-Source: bytebites_spec.md (Customer management, product fields, item collection/filtering, and transaction total-cost behavior).
-
 ```mermaid
 classDiagram
-    class Customer {
+    class Products {
         +String name
-        +PurchaseHistory purchaseHistory
-        +bool isVerifiedUser()
+        +float price
+        +String category
+        +float popularityRating
+        -List~Products~ _catalog$
+        +filterByCategory(category: str) List~Products~$
+        +listCatalog() tuple~Products~$
+        +clearCatalog() None$
+        +sortByPrice(descending: bool) List~Products~$
+        +sortByPopularity(descending: bool) List~Products~$
+    }
+
+    class Transactions {
+        +List~Products~ selectedItems
+        +addItem(product: Products) None
+        +calculateTotalCost() Decimal
     }
 
     class PurchaseHistory {
-        +Transaction[] transactions
-        +void addTransaction(transaction)
-        +Transaction[] getTransactions()
+        +List~Transactions~ transactions
+        +addTransaction(new_transaction: Transactions) None
+        +hasPastPurchases() bool
     }
 
-    class Product {
+    class Customers {
         +String name
-        +decimal price
-        +String category
-        +int popularityRating
+        +PurchaseHistory purchaseHistory
+        +addTransaction(new_transaction: Transactions) None
+        +isVerifiedUser() bool
     }
 
-    class Transaction {
-        +Product[] selectedItems
-        +void addItem(product)
-        +decimal computeTotalCost()
-    }
-
-    Customer "1" *-- "1" PurchaseHistory : has
-    PurchaseHistory "1" *-- "0..*" Transaction : stores
-    Transaction "1" o-- "1..*" Product : contains
-    Customer "1" --> "0..*" Transaction : initiates
+    Customers "1" *-- "1" PurchaseHistory : has
+    PurchaseHistory "1" *-- "0..*" Transactions : stores
+    Transactions "1" o-- "0..*" Products : contains
 ```
 
-Assumptions:
-- Class names are normalized to singular UML style from the provided candidate list.
-- Relationships and multiplicities include sensible inferences from the feature request text.
+**Relationship notes:**
+- `Customers ──* PurchaseHistory` — composition; a customer owns exactly one history
+- `PurchaseHistory ──* Transactions` — composition; history is nothing without its transactions
+- `Transactions ──o Products` — aggregation; items exist independently in the catalog, a transaction just references them
+
+The `$` marker on `Products` methods denotes class-level (`@classmethod`) operations, since the catalog is a `ClassVar` shared across all instances.

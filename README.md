@@ -26,7 +26,7 @@ The main hardening work in this project focused on:
 - `test_bytebites.py` - automated test coverage
 - `tmp_sanity_check.py` - manual verification script
 - `SECURITY_README.md` / change log - detailed hardening writeup
-- case study document - recruiter-facing summary of the hardening work
+- case study document - summary of the hardening work
 
 ## Running the project
 

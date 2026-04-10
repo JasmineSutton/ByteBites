@@ -1,4 +1,4 @@
-# ByteBites Security Hardening — Detailed Change Log
+# ByteBites Security Hardening - Detailed Change Log
 
 This document explains the security changes made to the ByteBites codebase. It is organized by file and includes the line ranges affected, what each change does, what issue it fixes, and which security frameworks it maps to.
 
@@ -17,7 +17,7 @@ This document explains the security changes made to the ByteBites codebase. It i
 
 ## File: `models.py`
 
-### Change 1 — New imports and security constants (Lines 8–19)
+### Change 1 - New imports and security constants (Lines 8–19)
 
 **What was added:**
 
@@ -43,8 +43,8 @@ The original code did not place clear limits on user-controlled values. That mea
 
 | Framework | Control / ID | Relevance |
 |---|---|---|
-| OWASP Top 10 | **A03:2021 — Injection** | The allowlist helps block injection-style payloads in stored text. |
-| OWASP Top 10 | **A04:2021 — Insecure Design** | Explicit limits support secure-by-design development. |
+| OWASP Top 10 | **A03:2021 - Injection** | The allowlist helps block injection-style payloads in stored text. |
+| OWASP Top 10 | **A04:2021 - Insecure Design** | Explicit limits support secure-by-design development. |
 | CWE | **CWE-770** (Allocation of Resources Without Limits) | Prevents uncontrolled memory growth. |
 | CWE | **CWE-20** (Improper Input Validation) | Enforces validation of allowed characters. |
 | NIST SP 800-53 | **SI-10** (Information Input Validation) | Inputs are validated before they are accepted. |
@@ -52,7 +52,7 @@ The original code did not place clear limits on user-controlled values. That mea
 
 ---
 
-### Change 2 — `_sanitize_text()` helper function (Lines 22–33)
+### Change 2 - `_sanitize_text()` helper function (Lines 22–33)
 
 **What was added:**
 
@@ -80,7 +80,7 @@ Before this, validation was minimal and inconsistent. For example, a simple `str
 
 | Framework | Control / ID | Relevance |
 |---|---|---|
-| OWASP Top 10 | **A03:2021 — Injection** | Allowlist validation is a direct defense against injection. |
+| OWASP Top 10 | **A03:2021 - Injection** | Allowlist validation is a direct defense against injection. |
 | CWE | **CWE-20** (Improper Input Validation) | Applies structured validation at each input point. |
 | CWE | **CWE-79** (Cross-site Scripting) | Rejects characters commonly used in stored XSS payloads. |
 | NIST SP 800-53 | **SI-10** (Information Input Validation) | Covers type, length, and character-set validation. |
@@ -88,7 +88,7 @@ Before this, validation was minimal and inconsistent. For example, a simple `str
 
 ---
 
-### Change 3 — `_to_decimal()` helper function (Lines 36–44)
+### Change 3 - `_to_decimal()` helper function (Lines 36–44)
 
 **What was added:**
 
@@ -113,14 +113,14 @@ Using native floats for money can cause subtle rounding issues. Those small erro
 
 | Framework | Control / ID | Relevance |
 |---|---|---|
-| OWASP Top 10 | **A04:2021 — Insecure Design** | Exact arithmetic is a design requirement in financial logic. |
+| OWASP Top 10 | **A04:2021 - Insecure Design** | Exact arithmetic is a design requirement in financial logic. |
 | CWE | **CWE-681** (Incorrect Conversion between Numeric Types) | Avoids precision loss in type conversion. |
 | CWE | **CWE-682** (Incorrect Calculation) | Prevents incorrect monetary totals. |
 | NIST SP 800-53 | **SI-10** (Information Input Validation) | Ensures numeric values are validated and normalized. |
 
 ---
 
-### Change 4 — `Products.__post_init__()` hardened (Lines 57–71)
+### Change 4 - `Products.__post_init__()` hardened (Lines 57–71)
 
 **What changed (before → after):**
 
@@ -167,8 +167,8 @@ The earlier version only checked a few conditions and left a lot of room for bad
 
 | Framework | Control / ID | Relevance |
 |---|---|---|
-| OWASP Top 10 | **A03:2021 — Injection** | Sanitized product fields reduce injection risk. |
-| OWASP Top 10 | **A04:2021 — Insecure Design** | Adds defensive controls and resource boundaries. |
+| OWASP Top 10 | **A03:2021 - Injection** | Sanitized product fields reduce injection risk. |
+| OWASP Top 10 | **A04:2021 - Insecure Design** | Adds defensive controls and resource boundaries. |
 | CWE | **CWE-20** (Improper Input Validation) | Improves validation for multiple fields. |
 | CWE | **CWE-770** (Allocation of Resources Without Limits) | Caps catalog size. |
 | CWE | **CWE-1287** (Improper Validation of Specified Type of Input) | Verifies the expected data type. |
@@ -177,7 +177,7 @@ The earlier version only checked a few conditions and left a lot of room for bad
 
 ---
 
-### Change 5 — `Products.listCatalog()` returns immutable tuple (Lines 89–91)
+### Change 5 - `Products.listCatalog()` returns immutable tuple (Lines 89–91)
 
 **What changed (before → after):**
 
@@ -205,13 +205,13 @@ Returning a tuple makes it clear that callers are only supposed to read the cata
 
 | Framework | Control / ID | Relevance |
 |---|---|---|
-| OWASP Top 10 | **A04:2021 — Insecure Design** | Supports least-privilege design. |
+| OWASP Top 10 | **A04:2021 - Insecure Design** | Supports least-privilege design. |
 | CWE | **CWE-1262** (Improper Access Control to Shared Resource) | Reduces the chance of outside mutation. |
 | NIST SP 800-53 | **AC-3** (Access Enforcement) | Helps enforce read-only behavior. |
 
 ---
 
-### Change 6 — `Transactions.addItem()` size limit (Lines 105–109)
+### Change 6 - `Transactions.addItem()` size limit (Lines 105–109)
 
 **What changed (before → after):**
 
@@ -245,14 +245,14 @@ Without a limit, a transaction could keep growing until it consumed excessive me
 
 | Framework | Control / ID | Relevance |
 |---|---|---|
-| OWASP Top 10 | **A04:2021 — Insecure Design** | Adds missing size-limit protections. |
+| OWASP Top 10 | **A04:2021 - Insecure Design** | Adds missing size-limit protections. |
 | CWE | **CWE-770** (Allocation of Resources Without Limits) | Prevents unbounded list growth. |
 | NIST SP 800-53 | **SC-5** (Denial-of-Service Protection) | Reduces memory exhaustion risk. |
 | NIST SP 800-53 | **SI-10** (Information Input Validation) | Validates count before accepting new input. |
 
 ---
 
-### Change 7 — `Transactions.calculateTotalCost()` uses Decimal (Lines 111–117)
+### Change 7 - `Transactions.calculateTotalCost()` uses Decimal (Lines 111–117)
 
 **What changed (before → after):**
 
@@ -284,14 +284,14 @@ For money, float is just not the right tool. Small rounding errors can creep in,
 
 | Framework | Control / ID | Relevance |
 |---|---|---|
-| OWASP Top 10 | **A04:2021 — Insecure Design** | Correct financial logic depends on exact arithmetic. |
+| OWASP Top 10 | **A04:2021 - Insecure Design** | Correct financial logic depends on exact arithmetic. |
 | CWE | **CWE-682** (Incorrect Calculation) | Prevents calculation errors. |
 | CWE | **CWE-681** (Incorrect Conversion between Numeric Types) | Uses the correct type for money. |
 | NIST SP 800-53 | **SI-10** (Information Input Validation) | Supports validated and normalized numeric processing. |
 
 ---
 
-### Change 8 — `PurchaseHistory.addTransaction()` size limit (Lines 124–130)
+### Change 8 - `PurchaseHistory.addTransaction()` size limit (Lines 124–130)
 
 **What changed (before → after):**
 
@@ -331,11 +331,11 @@ Just like the transaction item limit, this prevents uncontrolled growth in memor
 |---|---|---|
 | CWE | **CWE-770** (Allocation of Resources Without Limits) | Prevents unbounded growth of stored transactions. |
 | NIST SP 800-53 | **SC-5** (Denial-of-Service Protection) | Helps protect against resource exhaustion. |
-| OWASP Top 10 | **A04:2021 — Insecure Design** | Adds a design-level resource limit. |
+| OWASP Top 10 | **A04:2021 - Insecure Design** | Adds a design-level resource limit. |
 
 ---
 
-### Change 9 — `Customers.__post_init__()` sanitization (Lines 140–142)
+### Change 9 - `Customers.__post_init__()` sanitization (Lines 140–142)
 
 **What changed (before → after):**
 
@@ -364,7 +364,7 @@ A name field might look harmless, but it is still user input. If it is not valid
 
 | Framework | Control / ID | Relevance |
 |---|---|---|
-| OWASP Top 10 | **A03:2021 — Injection** | Validates customer names against injection-style input. |
+| OWASP Top 10 | **A03:2021 - Injection** | Validates customer names against injection-style input. |
 | CWE | **CWE-20** (Improper Input Validation) | Strengthens user-input validation. |
 | CWE | **CWE-79** (Cross-site Scripting) | Helps prevent stored XSS-style payloads. |
 | NIST SP 800-53 | **SI-10** (Information Input Validation) | Enforces consistent validation rules. |
@@ -374,7 +374,7 @@ A name field might look harmless, but it is still user input. If it is not valid
 
 ## File: `test_bytebites.py`
 
-### Change 10 — Updated assertions to use Decimal (Lines 1, 19, 25)
+### Change 10 - Updated assertions to use Decimal (Lines 1, 19, 25)
 
 **What changed:**
 
@@ -402,7 +402,7 @@ Once the application logic moved to `Decimal`, the tests needed to reflect that 
 
 ## File: `tmp_sanity_check.py`
 
-### Change 11 — Sanity check rebuilt for comprehensive validation
+### Change 11 - Sanity check rebuilt for comprehensive validation
 
 **What changed:**
 The sanity check was rebuilt so it now works as a full manual smoke test for all four classes. It checks catalog immutability, category filtering, sort behavior, total-cost calculation, transaction history, user verification behavior, and rejection of invalid input such as empty names, injection characters, invalid ratings, negative prices, and empty transactions. It also uses `Decimal` for monetary assertions.

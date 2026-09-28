@@ -2,15 +2,15 @@
 classDiagram
     class Products {
         +String name
-        +float price
+        +Decimal price
         +String category
         +float popularityRating
-        -List~Products~ _catalog$
-        +filterByCategory(category: str) List~Products~$
-        +listCatalog() tuple~Products~$
-        +clearCatalog() None$
-        +sortByPrice(descending: bool) List~Products~$
-        +sortByPopularity(descending: bool) List~Products~$
+        -List~Products~ _catalog
+        +filterByCategory(category: str) List~Products~
+        +listCatalog() tuple~Products~
+        +clearCatalog() None
+        +sortByPrice(descending: bool) List~Products~
+        +sortByPopularity(descending: bool) List~Products~
     }
 
     class Transactions {
@@ -33,13 +33,13 @@ classDiagram
     }
 
     Customers "1" *-- "1" PurchaseHistory : has
-    PurchaseHistory "1" *-- "0..*" Transactions : stores
+    PurchaseHistory "1" o-- "0..*" Transactions : stores
     Transactions "1" o-- "0..*" Products : contains
 ```
 
 **Relationship notes:**
 - `Customers ──* PurchaseHistory` — composition; a customer owns exactly one history
-- `PurchaseHistory ──* Transactions` — composition; history is nothing without its transactions
-- `Transactions ──o Products` — aggregation; items exist independently in the catalog, a transaction just references them
+- `PurchaseHistory ──o Transactions` — aggregation; history records transactions without owning the item catalog itself
+- `Transactions ──o Products` — aggregation; items exist independently in the catalog, and a transaction holds zero or more selected items
 
-The `$` marker on `Products` methods denotes class-level (`@classmethod`) operations, since the catalog is a `ClassVar` shared across all instances.
+**Design note:** the `_catalog` field replaces a separate `Menu` class because the menu is really just the product registry itself. Keeping that list on `Products` avoids duplicating item data and keeps category filtering, sorting, and browsing logic in a single source of truth.

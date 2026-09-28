@@ -17,22 +17,29 @@ class PurchaseHistory {
 
 class Products {
   +name: String
-  +price: float
+  +price: Decimal
   +category: String
   +popularityRating: float
+  -List~Products~ _catalog
   +filterByCategory(category: String): List~Products~
 }
 
 class Transactions {
   +selectedItems: List~Products~
   +addItem(p: Products): void
-  +calculateTotalCost(): float
+  +calculateTotalCost(): Decimal
 }
 
 Customers "1" *-- "1" PurchaseHistory : owns
 PurchaseHistory "1" o-- "0..*" Transactions : records
-Transactions "1" o-- "1..*" Products : contains
+Transactions "1" o-- "0..*" Products : contains
 ```
+
+## Design Notes
+
+- The `Products` class uses a single in-memory catalog stored in `_catalog`, which acts as the system's item registry and keeps filtering and sorting behavior in one place.
+- A separate `Menu` class would duplicate the same product data and create two sources of truth; `_catalog` keeps the catalog authoritative while still supporting category-based browsing.
+- Monetary values are modeled as `Decimal` so totals are precise and stable instead of relying on floating-point rounding.
 
 ## Class Roles
 
